@@ -15,44 +15,145 @@ namespace Planner
             bool alive = true;
             while (alive)
             {
-                Console.WriteLine("1. Создать цель \t 2. Показать цели \t 3. Показать цель");
-                Console.WriteLine("4. Копировать цель \t 5. Завершить цель \t 6. Редактировать цель");
-                Console.WriteLine("7. Удалить цель \t 9. Выйти из программы \t ");
-                Console.WriteLine("Введите номер пункта:");
+                Console.Write("Введите команду: ");
+
                 try
                 {
-                    int command = Convert.ToInt32(Console.ReadLine());
+                    var command = Console.ReadLine();
+                    var commandArr = command.Split(' ');
 
-                    switch (command)
+                    if (commandArr.Length == 0) continue;
+
+                    switch (commandArr[0])
                     {
-                        case 1:
-                            CreateGoal(planner);
+                        case Commands.GOALS:
+                            _ProcessGoalsCommand(commandArr, planner);
                             break;
-                        case 2:
-                            ShowGoals(planner);
+                        case Commands.GOAL:
+                            _ProcessGoalCommand(commandArr, planner);
                             break;
-                        case 3:
-                            ShowGoal(planner);
+                        case Commands.HELP:
+                            _ProcessHelp(commandArr);
                             break;
-                        case 4:
-                            CopyGoal(planner);
-                            break;
-                        case 5:
-                            CloseGoal(planner);
-                            break;
-                        case 6:
-                            EditGoal(planner);
-                            break;
-                        case 7:
-                            RemoveGoal(planner);
-                            break;
-                        case 9:
+                        case Commands.EXIT:
                             alive = false;
                             continue;
                     }
-
                 }
-                catch (Exception ex) { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        static void _ProcessHelp(String[] commandArr)
+        {
+            if (commandArr.Length == 1)
+            {
+                Help.ShowCommands();
+                return;
+            }
+
+            switch (commandArr[1])
+            {
+                case Commands.GOALS:
+                    Help.ShowGoalsCommands();
+                    break;
+                case Commands.GOAL:
+                    Help.ShowGoalCommands();
+                    break;
+            }
+        }
+
+        static void _ProcessGoalsCommand(String[] commandArr, PlannerLib.Planner planner)
+        {
+            if (commandArr.Length == 1)
+            {
+                ShowGoals(planner);
+                return;
+            }
+
+            switch (commandArr[1])
+            {
+                case Commands.CREATE:
+                    if (commandArr.Length == 2)
+                    {
+                        CreateGoal(planner);
+                        return;
+                    }
+
+                    if (commandArr.Length == 4)
+                    {
+                        CreateGoal(planner, commandArr[2], commandArr[3]);
+                        return;
+                    }
+                    break;
+                case Commands.ACHIEVED:
+                    ShowGoals(planner, true);
+                    break;
+                case Commands.FAILED:
+                    ShowGoals(planner, false);
+                    break;
+            }
+        }
+
+        static void _ProcessGoalCommand(String[] commandArr, PlannerLib.Planner planner)
+        {
+            if (commandArr.Length < 2)
+            {
+                Console.WriteLine("Для этой команды обязательны параметры\n");
+                return;
+            }
+            else
+            {
+                var idStr = commandArr[1];
+
+                if (Int32.TryParse(idStr, out int id))
+                {
+                    var goal = planner.FindGoal(id);
+                    if (goal == null)
+                    {
+                        Console.WriteLine($"Цель с номером {id} не найдена");
+                        return;
+                    }
+
+                    if (commandArr.Length == 2)
+                    {
+                        ShowGoal(goal);
+                    }
+
+                    if (commandArr.Length == 3)
+                    {
+                        switch (commandArr[2])
+                        {
+                            case Commands.EDIT:
+                                _editGoal(goal);
+                                break;
+                            case Commands.DELETE:
+                                planner.RemoveGoal(goal);
+                                break;
+                            case Commands.COPY:
+                                _copyGoal(planner, goal);
+                                break;
+                            case Commands.CLOSE:
+                                _closeGoal(goal);
+                                break;
+                            case Commands.STAGES:
+                                ShowStages(goal);
+                                break;
+                        }
+                    }
+
+                    if (commandArr.Length == 4)
+                    {
+                        if (commandArr[2] == Commands.STAGES && commandArr[3] == Commands.CREATE)
+                        {
+                            AddStage(goal);
+                        }
+                    }
+                }
+
             }
         }
 
@@ -77,12 +178,43 @@ namespace Planner
             Console.WriteLine($"Цель создана! Id = {id}");
         }
 
+        static void CreateGoal(PlannerLib.Planner planner, string title, string daysStr)
+        {
+            if (Int32.TryParse(daysStr, out int days) == false)
+            {
+                days = 30;
+            }
+
+            var id = planner.AddGoal(title, "", days);
+
+            Console.WriteLine($"Цель создана! Id = {id}");
+        }
+
         static void ShowGoals(PlannerLib.Planner planner)
         {
             var goals = planner.GetGoals();
             foreach (var goal in goals)
             {
                 PrintGoalHeader(goal);
+            }
+        }
+
+        static void ShowGoals(PlannerLib.Planner planner, bool achieved)
+        {
+            var goals = achieved ? planner.GetAchievedGoals() : planner.GetFailedGoals();
+            foreach (var goal in goals)
+            {
+                PrintGoalHeader(goal);
+            }
+        }
+
+        static void ShowGoal(Goal goal)
+        {
+            PrintGoalHeader(goal);
+
+            foreach (var stage in goal.Stages)
+            {
+                PrintStage(stage);
             }
         }
 
@@ -169,40 +301,45 @@ namespace Planner
                 var goal = planner.FindGoal(id);
                 if (goal != null)
                 {
-                    Console.WriteLine("Выберите поле для редактирования:");
-                    Console.WriteLine("1. Заголовок");
-                    Console.WriteLine("2. Описание");
-                    Console.WriteLine("3. Количество дней на выполнение");
-                    var resultStr = Console.ReadLine();
-
-                    if (Int32.TryParse(resultStr, out int result))
-                    {
-                        switch (result)
-                        {
-                            case 1:
-                                Console.WriteLine("Введите новый заголовок");
-                                var newTitle = Console.ReadLine();
-                                goal.Update(newTitle: newTitle);
-                                break;
-                            case 2:
-                                Console.WriteLine("Введите новое описание");
-                                var newDescription = Console.ReadLine();
-                                goal.Update(newDescription: newDescription);
-                                break;
-                            case 3:
-                                Console.WriteLine($"Введите количество дней, начиная с {goal.StartDate}");
-                                var daysStr = Console.ReadLine();
-                                if (Int32.TryParse(daysStr, out int days))
-                                {
-                                    goal.Update(days: days);
-                                }
-                                break;
-                        }
-                    }
+                    _editGoal(goal);
                 }
                 else
                 {
                     Console.WriteLine($"Цель с номером {id} не найдена");
+                }
+            }
+        }
+
+        static void _editGoal(Goal goal)
+        {
+            Console.WriteLine("Выберите поле для редактирования:");
+            Console.WriteLine("1. Заголовок");
+            Console.WriteLine("2. Описание");
+            Console.WriteLine("3. Количество дней на выполнение");
+            var resultStr = Console.ReadLine();
+
+            if (Int32.TryParse(resultStr, out int result))
+            {
+                switch (result)
+                {
+                    case 1:
+                        Console.WriteLine("Введите новый заголовок");
+                        var newTitle = Console.ReadLine();
+                        goal.Update(newTitle: newTitle);
+                        break;
+                    case 2:
+                        Console.WriteLine("Введите новое описание");
+                        var newDescription = Console.ReadLine();
+                        goal.Update(newDescription: newDescription);
+                        break;
+                    case 3:
+                        Console.WriteLine($"Введите количество дней, начиная с {goal.StartDate}");
+                        var daysStr = Console.ReadLine();
+                        if (Int32.TryParse(daysStr, out int days))
+                        {
+                            goal.Update(days: days);
+                        }
+                        break;
                 }
             }
         }
@@ -234,16 +371,21 @@ namespace Planner
                 var goal = planner.FindGoal(id);
                 if (goal != null)
                 {
-                    Console.WriteLine("Введите название для новой цели");
-                    var title = Console.ReadLine();
-
-                    planner.CopyGoal(goal, title);
+                    _copyGoal(planner, goal);
                 }
                 else
                 {
                     Console.WriteLine($"Цель с номером {id} не найдена");
                 }
             }
+        }
+
+        static void _copyGoal(PlannerLib.Planner planner, Goal goal)
+        {
+            Console.WriteLine("Введите название для новой цели");
+            var title = Console.ReadLine();
+
+            planner.CopyGoal(goal, title);
         }
 
         static void CloseGoal(PlannerLib.Planner planner)
@@ -255,18 +397,23 @@ namespace Planner
                 var goal = planner.FindGoal(id);
                 if (goal != null)
                 {
-                    Console.WriteLine("Выберите пункт: 1. цель достигнута \t2. цель провалена");
-                    var resultStr = Console.ReadLine();
-
-                    if (Int32.TryParse(resultStr, out int result))
-                    {
-                        goal.Close(result == 1);
-                    }
+                    _closeGoal(goal);
                 }
                 else
                 {
                     Console.WriteLine($"Цель с номером {id} не найдена");
                 }
+            }
+        }
+
+        static void _closeGoal(Goal goal)
+        {
+            Console.WriteLine("Выберите пункт: 1. цель достигнута \t2. цель провалена");
+            var resultStr = Console.ReadLine();
+
+            if (Int32.TryParse(resultStr, out int result))
+            {
+                goal.Close(result == 1);
             }
         }
 

@@ -54,5 +54,15 @@ namespace PlannerLib
         {
             return goals.Where(g => g.IsClosed == false);
         }
+
+        public IEnumerable<Goal> GetAchievedGoals()
+        {
+            return goals.Where(g => g.IsClosed && g.IsAchieved.Value);
+        }
+
+        public IEnumerable<Goal> GetFailedGoals()
+        {
+            return goals.Where(g => g.IsClosed && g.IsAchieved.Value == false);
+        }
     }
 }

@@ -15,8 +15,10 @@ namespace PlannerLib
                 var goals = new List<Goal>
                 {
                     goal1(),
-                    goal2()
-                };                
+                    goal2(),
+                    goal3(),
+                    goal4()
+                };
 
                 return goals;
             }
@@ -124,6 +126,30 @@ namespace PlannerLib
             stage.CheckList.Add(new CheckPoint { Text = "Муравей и Стрекоза" });
             stage.CheckList.Add(new CheckPoint { Text = "Кошка и мышь" });
             goal.Stages.Add(stage);
+            return goal;
+        }
+
+        static Goal goal3()
+        {
+            var goal = new Goal
+            {
+                Title = "Немецкий",
+                Description = "Пройти три темы",
+                FinishDate = DateTime.Now.AddDays(7),
+            };
+            goal.Close(true);
+            return goal;
+        }
+
+        static Goal goal4()
+        {
+            var goal = new Goal
+            {
+                Title = "Французский",
+                Description = "Пройти три темы",
+                FinishDate = DateTime.Now.AddDays(7),
+            };
+            goal.Close(false);
             return goal;
         }
     }
