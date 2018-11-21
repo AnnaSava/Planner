@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Goal.cs" />
     <Compile Include="Initializer.cs" />
+    <Compile Include="MovingExtention.cs" />
     <Compile Include="Planner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

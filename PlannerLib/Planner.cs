@@ -26,7 +26,6 @@ namespace PlannerLib
             {
                 Title = title,
                 Description = description,
-                StartDate = DateTime.Now,
                 FinishDate = DateTime.Now.AddDays(days)
             };
             goals.Add(goal);

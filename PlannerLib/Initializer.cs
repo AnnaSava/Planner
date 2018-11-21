@@ -28,35 +28,34 @@ namespace PlannerLib
             {
                 Title = "Шагомер",
                 Description = "Пройти 30000 шагов за неделю",
-                StartDate = DateTime.Now,
                 FinishDate = DateTime.Now.AddDays(7)
             };
 
             var stage = new Stage
             {
                 Number = 1,
-                Title = "Пн - 5000",
+                Title = "Пн - 1000",
                 Description = ""
             };
             goal.Stages.Add(stage);
             stage = new Stage
             {
                 Number = 2,
-                Title = "Вт - 5000",
+                Title = "Вт - 2000",
                 Description = ""
             };
             goal.Stages.Add(stage);
             stage = new Stage
             {
                 Number = 3,
-                Title = "Ср - 5000",
+                Title = "Ср - 3000",
                 Description = ""
             };
             goal.Stages.Add(stage);
             stage = new Stage
             {
                 Number = 4,
-                Title = "Чт - 5000",
+                Title = "Чт - 4000",
                 Description = ""
             };
             goal.Stages.Add(stage);
@@ -70,14 +69,14 @@ namespace PlannerLib
             stage = new Stage
             {
                 Number = 6,
-                Title = "Сб - 2500",
+                Title = "Сб - 6000",
                 Description = ""
             };
             goal.Stages.Add(stage);
             stage = new Stage
             {
                 Number = 7,
-                Title = "Вс - 2500",
+                Title = "Вс - 7000",
                 Description = ""
             };
             goal.Stages.Add(stage);
@@ -90,7 +89,6 @@ namespace PlannerLib
             {
                 Title = "Испанский",
                 Description = "Пройти три темы",
-                StartDate = DateTime.Now,
                 FinishDate = DateTime.Now.AddDays(7)
             };
 
@@ -98,10 +96,13 @@ namespace PlannerLib
             {
                 Number = 1,
                 Title = "Моя семья",
-                Description = "Два текста и новые слова"
+                Description = "Пять текстов"
             };
-            stage.CheckList.Add(new CheckPoint { Text = "Мамина помада" });
-            stage.CheckList.Add(new CheckPoint { Text = "Папины трусы" });
+            stage.CheckList.Add(new CheckPoint { Text = "Текст 1" });
+            stage.CheckList.Add(new CheckPoint { Text = "Текст 2" });
+            stage.CheckList.Add(new CheckPoint { Text = "Текст 3" });
+            stage.CheckList.Add(new CheckPoint { Text = "Текст 4" });
+            stage.CheckList.Add(new CheckPoint { Text = "Текст 5" });
             goal.Stages.Add(stage);
 
             stage = new Stage
