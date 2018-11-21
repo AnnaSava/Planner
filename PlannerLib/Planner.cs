@@ -51,9 +51,9 @@ namespace PlannerLib
             return goals.Find(g => g.Id == id);
         }
 
-        public List<Goal> GetGoals()
+        public IEnumerable<Goal> GetGoals()
         {
-            return goals;
+            return goals.Where(g => g.IsClosed == false);
         }
     }
 }

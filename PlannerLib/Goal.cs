@@ -20,6 +20,10 @@ namespace PlannerLib
 
         public DateTime FinishDate { get; set; }
 
+        public bool IsClosed { get; private set; }
+
+        public bool? IsAchieved { get; private set; }
+
         public List<Stage> Stages { get; set; }
 
         public Goal()
@@ -42,6 +46,13 @@ namespace PlannerLib
             return goal;
         }
 
+        public void Close(bool isAchieved)
+        {
+            this.IsClosed = true;
+            this.IsAchieved = isAchieved;
+            this.FinishDate = DateTime.Now;
+        }
+
         public void AddStage(String title, String description)
         {
             var stage = new Stage
@@ -52,6 +63,20 @@ namespace PlannerLib
             };
 
             Stages.Add(stage);
+        }
+
+        public void RemoveStage(Stage stage)
+        {
+            Stages.Remove(stage);
+            reNumberStages();
+        }
+
+        private void reNumberStages()
+        {
+            for (int i = 0; i < this.Stages.Count; i++)
+            {
+                this.Stages[i].Number = i + 1;
+            }
         }
 
         public Stage FindStage(int number)

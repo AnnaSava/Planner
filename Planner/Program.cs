@@ -16,7 +16,7 @@ namespace Planner
             while (alive)
             {
                 Console.WriteLine("1. Создать цель \t 2. Показать цели \t 3. Показать цель");
-                Console.WriteLine("4. Копировать цель \t 5. Удалить цель \t ");
+                Console.WriteLine("4. Копировать цель \t 5. Завершить цель \t 6. Удалить цель");
                 Console.WriteLine("9. Выйти из программы \t ");
                 Console.WriteLine("Введите номер пункта:");
                 try
@@ -38,6 +38,9 @@ namespace Planner
                             CopyGoal(planner);
                             break;
                         case 5:
+                            CloseGoal(planner);
+                            break;
+                        case 6:
                             RemoveGoal(planner);
                             break;
                         case 9:
@@ -105,6 +108,7 @@ namespace Planner
                     while (alive)
                     {
                         Console.WriteLine("1. Добавить этап \t 2. Показать этапы \t 3. Добавить чеклист");
+                        Console.WriteLine("4. Удалить этап \t ");
                         Console.WriteLine("9. Вернуться");
                         int command = Convert.ToInt32(Console.ReadLine());
 
@@ -115,6 +119,8 @@ namespace Planner
                             case 2: ShowStages(goal);
                                 break;
                             case 3: AddCheckList(goal);
+                                break;
+                            case 4: RemoveStage(goal);
                                 break;
                             case 9:
                                 alive = false;
@@ -168,6 +174,30 @@ namespace Planner
             }
         }
 
+        static void CloseGoal(PlannerLib.Planner planner)
+        {
+            Console.WriteLine("Введите номер цели");
+            var idStr = Console.ReadLine();
+            if (Int32.TryParse(idStr, out int id))
+            {
+                var goal = planner.FindGoal(id);
+                if (goal != null)
+                {
+                    Console.WriteLine("Выберите пункт: 1. цель достигнута \t2. цель провалена");
+                    var resultStr = Console.ReadLine();
+
+                    if (Int32.TryParse(resultStr, out int result))
+                    {
+                        goal.Close(result == 1);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Цель с номером {id} не найдена");
+                }
+            }
+        }
+
         static void AddStage(Goal goal)
         {
             Console.WriteLine("Введите название этапа");
@@ -177,6 +207,25 @@ namespace Planner
             var description = Console.ReadLine();
 
             goal.AddStage(title, description);
+        }
+
+        static void RemoveStage(Goal goal)
+        {
+            Console.WriteLine("Введите номер этапа");
+            var numberStr = Console.ReadLine();
+
+            if (Int32.TryParse(numberStr, out int number))
+            {
+                var stage = goal.FindStage(number);
+                if (stage != null)
+                {
+                    goal.RemoveStage(stage);
+                }
+                else
+                {
+                    Console.WriteLine($"Этап {number} не найден");
+                }
+            }
         }
 
         static void ShowStages(Goal goal)
@@ -216,7 +265,22 @@ namespace Planner
         {
             Console.WriteLine($"Цель №{goal.Id} {goal.Title}");
             Console.WriteLine($"Описание: {goal.Description}");
-            Console.WriteLine($"С {goal.StartDate} по {goal.FinishDate}\n");
+            if (goal.IsClosed)
+            {
+                Console.Write("ЗАВЕРШЕНА");
+                if(goal.IsAchieved.Value)
+                {
+                    Console.WriteLine(" ДОСТИГНУТА");
+                }
+                else
+                {
+                    Console.WriteLine(" ПРОВАЛЕНА");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"С {goal.StartDate} по {goal.FinishDate}\n");
+            }
         }
 
         static void PrintStage(Stage stage)
