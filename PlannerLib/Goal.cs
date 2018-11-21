@@ -96,6 +96,23 @@ namespace PlannerLib
             reNumberStages();
         }
 
+        public void MoveToStage(Stage stage, Goal toGoal)
+        {
+            Stages.Remove(stage);
+            reNumberStages();
+
+            stage.Number = toGoal.Stages.Count + 1;
+            toGoal.Stages.Add(stage);
+        }
+
+        public void CopyToStage(Stage stage, Goal toGoal)
+        {
+            var newStage = stage.Clone() as Stage;
+            newStage.Number = toGoal.Stages.Count + 1;
+
+            toGoal.Stages.Add(newStage);
+        }
+
         private void reNumberStages()
         {
             for (int i = 0; i < this.Stages.Count; i++)

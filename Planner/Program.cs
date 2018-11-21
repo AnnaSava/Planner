@@ -112,7 +112,8 @@ namespace Planner
                     {
                         Console.WriteLine("1. Добавить этап \t 2. Показать этапы \t 3. Показать этап");
                         Console.WriteLine("4. Переместить этап \t 5. Редактировать этап \t 6. Удалить этап");
-                        Console.WriteLine("7. Завершить этап \t 8. Возобновить этап \t 9. Вернуться");
+                        Console.WriteLine("7. Завершить этап \t 8. Возобновить этап \t 9. Копировать этап");
+                        Console.WriteLine("10. Перенести этап \t 20. Вернуться");
                         int command = Convert.ToInt32(Console.ReadLine());
 
                         switch (command)
@@ -142,6 +143,11 @@ namespace Planner
                                 OpenStage(goal);
                                 break;
                             case 9:
+                                CopyToStage(planner, goal);
+                                break;
+                            case 10: MoveToStage(planner, goal);
+                                break;
+                            case 20:
                                 alive = false;
                                 continue;
                         }
@@ -350,6 +356,74 @@ namespace Planner
                                 var newDescription = Console.ReadLine();
                                 stage.Update(newDescription: newDescription);
                                 break;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Этап {number} не найден");
+                }
+            }
+        }
+
+        static void CopyToStage(PlannerLib.Planner planner, Goal currentGoal)
+        {
+            Console.WriteLine("Введите номер этапа");
+            var numberStr = Console.ReadLine();
+
+            if (Int32.TryParse(numberStr, out int number))
+            {
+                var stage = currentGoal.FindStage(number);
+                if (stage != null)
+                {
+                    Console.WriteLine($"Текущая цель №{currentGoal.Id}");
+                    Console.WriteLine("Введите номер цели, в которую скопировать этап");
+                    var idStr = Console.ReadLine();
+
+                    if (Int32.TryParse(idStr, out int id))
+                    {
+                        var toGoal = planner.FindGoal(id);
+                        if (toGoal == null)
+                        {
+                            Console.WriteLine($"Цель с номером {id} не найдена");
+                        }
+                        else
+                        {
+                            currentGoal.CopyToStage(stage, toGoal);
+                        }
+                    }                    
+                }
+                else
+                {
+                    Console.WriteLine($"Этап {number} не найден");
+                }
+            }
+        }
+
+        static void MoveToStage(PlannerLib.Planner planner, Goal currentGoal)
+        {
+            Console.WriteLine("Введите номер этапа");
+            var numberStr = Console.ReadLine();
+
+            if (Int32.TryParse(numberStr, out int number))
+            {
+                var stage = currentGoal.FindStage(number);
+                if (stage != null)
+                {
+                    Console.WriteLine($"Текущая цель №{currentGoal.Id}");
+                    Console.WriteLine("Введите номер цели, в которую перенести этап");
+                    var idStr = Console.ReadLine();
+
+                    if (Int32.TryParse(idStr, out int id) && id!=currentGoal.Id)
+                    {
+                        var toGoal = planner.FindGoal(id);
+                        if (toGoal == null)
+                        {
+                            Console.WriteLine($"Цель с номером {id} не найдена");
+                        }
+                        else
+                        {
+                            currentGoal.MoveToStage(stage, toGoal);
                         }
                     }
                 }
