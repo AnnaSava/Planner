@@ -33,6 +33,19 @@ namespace PlannerLib
             return goal.Id;
         }
 
+        public void RemoveGoal(Goal goal)
+        {
+            if (goal == null) return;
+            goals.Remove(goal);
+        }
+
+        public void CopyGoal(Goal goal, string newTitle)
+        {
+            var newGoal = goal.Clone() as Goal;
+            newGoal.Title = String.IsNullOrEmpty(newTitle) ? goal.Title : newTitle;
+            goals.Add(newGoal);
+        }
+
         public Goal FindGoal(int id)
         {
             return goals.Find(g => g.Id == id);

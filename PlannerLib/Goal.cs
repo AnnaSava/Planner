@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlannerLib
 {
-    public class Goal
+    public class Goal : ICloneable
     {
         public int Id { get; set; }
 
@@ -29,11 +29,24 @@ namespace PlannerLib
             Stages = new List<Stage>();
         }
 
+        public object Clone()
+        {
+            var goal = new Goal
+            {
+                Title = this.Title,
+                Description = this.Description,
+                StartDate = DateTime.Now
+            };
+            goal.FinishDate = goal.StartDate.AddDays((this.FinishDate - this.StartDate).TotalDays);
+            goal.Stages.AddRange(this.Stages.Select(s => s.Clone() as Stage));
+            return goal;
+        }
+
         public void AddStage(String title, String description)
         {
             var stage = new Stage
             {
-                Number= Stages.Count + 1,
+                Number = Stages.Count + 1,
                 Title = title,
                 Description = description
             };
@@ -47,7 +60,7 @@ namespace PlannerLib
         }
     }
 
-    public class Stage
+    public class Stage : ICloneable
     {
         public int Number { get; set; }
 
@@ -68,12 +81,31 @@ namespace PlannerLib
         {
             CheckList.AddRange(items.Select(i => new CheckPoint { Text = i }));
         }
+
+        public object Clone()
+        {
+            var stage = new Stage
+            {
+                Number = this.Number,
+                Title = this.Title,
+                Description = this.Description,
+                IsDone = this.IsDone,
+            };
+
+            stage.CheckList.AddRange(this.CheckList.Select(i => i.Clone() as CheckPoint));
+            return stage;
+        }
     }
 
-    public class CheckPoint
+    public class CheckPoint : ICloneable
     {
         public String Text { get; set; }
 
         public bool IsDone { get; set; }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

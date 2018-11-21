@@ -16,6 +16,7 @@ namespace Planner
             while (alive)
             {
                 Console.WriteLine("1. Создать цель \t 2. Показать цели \t 3. Показать цель");
+                Console.WriteLine("4. Копировать цель \t 5. Удалить цель \t ");
                 Console.WriteLine("9. Выйти из программы \t ");
                 Console.WriteLine("Введите номер пункта:");
                 try
@@ -32,6 +33,12 @@ namespace Planner
                             break;
                         case 3:
                             ShowGoal(planner);
+                            break;
+                        case 4:
+                            CopyGoal(planner);
+                            break;
+                        case 5:
+                            RemoveGoal(planner);
                             break;
                         case 9:
                             alive = false;
@@ -122,6 +129,45 @@ namespace Planner
             }
         }
 
+        static void RemoveGoal(PlannerLib.Planner planner)
+        {
+            Console.WriteLine("Введите номер цели");
+            var idStr = Console.ReadLine();
+            if (Int32.TryParse(idStr, out int id))
+            {
+                var goal = planner.FindGoal(id);
+                if (goal != null)
+                {
+                    planner.RemoveGoal(goal);
+                }
+                else
+                {
+                    Console.WriteLine($"Цель с номером {id} не найдена");
+                }
+            }
+        }
+
+        static void CopyGoal(PlannerLib.Planner planner)
+        {
+            Console.WriteLine("Введите номер цели");
+            var idStr = Console.ReadLine();
+            if (Int32.TryParse(idStr, out int id))
+            {
+                var goal = planner.FindGoal(id);
+                if (goal != null)
+                {
+                    Console.WriteLine("Введите название для новой цели");
+                    var title = Console.ReadLine();
+
+                    planner.CopyGoal(goal, title);
+                }
+                else
+                {
+                    Console.WriteLine($"Цель с номером {id} не найдена");
+                }
+            }
+        }
+
         static void AddStage(Goal goal)
         {
             Console.WriteLine("Введите название этапа");
@@ -183,5 +229,6 @@ namespace Planner
                 Console.WriteLine($"\t\t{checkPoint.Text}");                
             }
         }
+        
     }
 }
