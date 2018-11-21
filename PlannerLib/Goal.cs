@@ -57,33 +57,16 @@ namespace PlannerLib
 
         public bool IsDone { get; set; }
 
-        public List<CheckList> CheckLists { get; set; }
+        public List<CheckPoint> CheckList { get; set; }
 
         public Stage()
         {
-            CheckLists = new List<CheckList>();
+            CheckList = new List<CheckPoint>();
         }
 
-        public void AddCheckList(string title, IEnumerable<string> items)
+        public void AddCheckList(IEnumerable<string> items)
         {
-            var checkList = new CheckList
-            {
-                Title = title
-            };
-            checkList.Items.AddRange(items.Select(i => new CheckPoint { Text = i }));
-            CheckLists.Add(checkList);
-        }
-    }
-
-    public class CheckList
-    {
-        public String Title { get; set; }
-
-        public List<CheckPoint> Items { get; set; }
-
-        public CheckList()
-        {
-            Items = new List<CheckPoint>();
+            CheckList.AddRange(items.Select(i => new CheckPoint { Text = i }));
         }
     }
 

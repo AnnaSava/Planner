@@ -100,26 +100,8 @@ namespace PlannerLib
                 Title = "Моя семья",
                 Description = "Два текста и новые слова"
             };
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Тексты",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "Мамина помада" },
-                        new CheckPoint{ Text = "Папины трусы" },
-                    }
-            });
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Слова",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "мама" },
-                        new CheckPoint{ Text = "папа" },
-                        new CheckPoint{ Text = "брат" },
-                        new CheckPoint{ Text = "сестра" },
-                    }
-            });
+            stage.CheckList.Add(new CheckPoint { Text = "Мамина помада" });
+            stage.CheckList.Add(new CheckPoint { Text = "Папины трусы" });
             goal.Stages.Add(stage);
 
             stage = new Stage
@@ -128,24 +110,7 @@ namespace PlannerLib
                 Title = "Еда",
                 Description = "Стихотворение и новые слова"
             };
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Стихотворение",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "Ода капусте" }
-                    }
-            });
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Слова",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "морковь" },
-                        new CheckPoint{ Text = "капуста" },
-                        new CheckPoint{ Text = "овощи" }
-                    }
-            });
+            stage.CheckList.Add(new CheckPoint { Text = "Стих" });
             goal.Stages.Add(stage);
 
             stage = new Stage
@@ -154,34 +119,9 @@ namespace PlannerLib
                 Title = "Животные",
                 Description = "Три диалога, грамматика и новые слова"
             };
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Диалоги",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "Ворона и Лисица" },
-                        new CheckPoint{ Text = "Муравей и Стрекоза" },
-                        new CheckPoint{ Text = "Кошка и мышь" }
-                    }
-            });
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Слова",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "ворона" },
-                        new CheckPoint{ Text = "стрекоза" }
-                    }
-            });
-            stage.CheckLists.Add(new CheckList
-            {
-                Title = "Грамматика",
-                Items = new List<CheckPoint>
-                    {
-                        new CheckPoint{ Text = "Прошедшее время" },
-                        new CheckPoint{ Text = "Неправильные глаголы" }
-                    }
-            });
+            stage.CheckList.Add(new CheckPoint { Text = "Ворона и Лисица" });
+            stage.CheckList.Add(new CheckPoint { Text = "Муравей и Стрекоза" });
+            stage.CheckList.Add(new CheckPoint { Text = "Кошка и мышь" });
             goal.Stages.Add(stage);
             return goal;
         }

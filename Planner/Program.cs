@@ -156,15 +156,12 @@ namespace Planner
                 }
                 else
                 {
-                    Console.WriteLine("Введите название списка");
-                    var title = Console.ReadLine();
-
                     Console.WriteLine("Введите пункты списка через запятую");
                     var itemsStr = Console.ReadLine();
 
                     var items = itemsStr.Split(',').Select(i => i.Trim());
 
-                    stage.AddCheckList(title, items);
+                    stage.AddCheckList(items);
                 }
             }
         }
@@ -181,13 +178,9 @@ namespace Planner
             Console.WriteLine($"Этап {stage.Number}. {stage.Title}");
             Console.WriteLine($"\tОписание: {stage.Description}");
 
-            foreach (var checkList in stage.CheckLists)
+            foreach (var checkPoint in stage.CheckList)
             {
-                Console.WriteLine($"\t{checkList.Title}");
-                foreach (var item in checkList.Items)
-                {
-                    Console.WriteLine($"\t\t{item.Text}");
-                }
+                Console.WriteLine($"\t\t{checkPoint.Text}");                
             }
         }
     }
