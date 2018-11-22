@@ -8,7 +8,7 @@ namespace Planner
 {
     static class Help
     {
-        public static void ShowCommands()
+        public static void ShowCommands(String command)
         {
             Console.WriteLine($"{Commands.GOALS} - показать актуальные цели");
             Console.WriteLine($"{Commands.GOAL} [номер] - показать цель");
@@ -17,7 +17,7 @@ namespace Planner
             Console.WriteLine();
         }
 
-        public static void ShowGoalsCommands()
+        public static void ShowGoalsCommands(String command)
         {
             Console.WriteLine($"{Commands.CREATE} - добавить цель");
             Console.WriteLine($"{Commands.CREATE} [заголовок] [срок] - добавить цель сразу");
@@ -26,7 +26,7 @@ namespace Planner
             Console.WriteLine();
         }
 
-        public static void ShowGoalCommands()
+        public static void ShowGoalCommands(String command)
         {
             Console.WriteLine($"{Commands.EDIT} - редактировать цель");
             Console.WriteLine($"{Commands.DELETE} - удалить цель");

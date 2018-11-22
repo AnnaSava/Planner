@@ -17,7 +17,14 @@ namespace PlannerLib
 
         public Planner(bool initialize)
         {
-            goals = Initializer.Goals;
+            if (initialize)
+            {
+                goals = Initializer.Goals;
+            }
+            else
+            {
+                goals = new List<Goal>();
+            }
         }
 
         public int AddGoal(String title, String description, int days)
