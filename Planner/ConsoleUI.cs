@@ -27,8 +27,21 @@ namespace Planner
             CommandRegistry.Add(Patterns.GOAL_ID_DELETE, RemoveGoal);
             CommandRegistry.Add(Patterns.GOAL_ID_CLOSE, CloseGoal);
             CommandRegistry.Add(Patterns.GOAL_ID_COPY, CopyGoal);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGES, ShowStages);
 
             CommandRegistry.Add(Patterns.GOAL_ID_STAGES_CREATE, AddStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID, ShowStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_EDIT, EditStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_CLOSE, CloseStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_OPEN, OpenStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_DELETE, RemoveStage);
+
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_COPYTO_GOAL_ID, CopyToStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVETO_GOAL_ID, MoveToStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_UP, MoveUpStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_DOWN, MoveDownStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_BEGIN, MoveToBeginStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_END, MoveToEndStage);
         }
 
         #region Goals Actions
@@ -47,23 +60,7 @@ namespace Planner
         {
             PrintGoals(planner.GetFailedGoals());
         }
-
-        static void ShowGoal(String command)
-        {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
-            {
-                PrintGoalHeader(goal);
-
-                foreach (var stage in goal.Stages)
-                {
-                    PrintStage(stage);
-                }
-            }
-        }
-
+        
         static void CreateGoal(String command)
         {
             Console.WriteLine("Введите заголовок цели");
@@ -85,12 +82,22 @@ namespace Planner
             Console.WriteLine($"Цель создана! Id = {id}");
         }
 
+        static void ShowGoal(String command)
+        {
+            if (FindGoal(command, out Goal goal))
+            {
+                PrintGoalHeader(goal);
+
+                foreach (var stage in goal.Stages)
+                {
+                    PrintStage(stage);
+                }
+            }
+        }
+
         static void EditGoal(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 Console.WriteLine("Выберите поле для редактирования:");
                 Console.WriteLine("1. Заголовок");
@@ -127,10 +134,7 @@ namespace Planner
 
         static void RemoveGoal(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 planner.RemoveGoal(goal);
             }
@@ -138,10 +142,7 @@ namespace Planner
 
         static void CopyGoal(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 Console.WriteLine("Введите название для новой цели");
                 var title = Console.ReadLine();
@@ -152,10 +153,7 @@ namespace Planner
 
         static void CloseGoal(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 Console.WriteLine("Выберите пункт: 1. цель достигнута \t2. цель провалена");
                 var resultStr = Console.ReadLine();
@@ -173,10 +171,7 @@ namespace Planner
 
         static void ShowStages(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 foreach (var stage in goal.Stages)
                 {
@@ -187,10 +182,7 @@ namespace Planner
 
         static void AddStage(String command)
         {
-            var commandArr = command.Split(' ');
-            var idStr = commandArr[1];
-
-            if (FindGoal(commandArr[1], out Goal goal))
+            if (FindGoal(command, out Goal goal))
             {
                 Console.WriteLine("Введите название этапа");
                 var title = Console.ReadLine();
@@ -202,12 +194,134 @@ namespace Planner
             }
         }
 
+        static void ShowStage(String command)
+        {
+            if (FindStage(command, out Stage stage))
+            {
+                PrintStage(stage);
+            }
+        }
+        
+        static void EditStage(String command)
+        {
+            if(FindStage(command, out Stage stage))
+            {
+                Console.WriteLine("Выберите поле для редактирования:");
+                Console.WriteLine("1. Название");
+                Console.WriteLine("2. Описание");
+                var resultStr = Console.ReadLine();
+
+                if (Int32.TryParse(resultStr, out int result))
+                {
+                    switch (result)
+                    {
+                        case 1:
+                            Console.WriteLine("Введите новое название");
+                            var newTitle = Console.ReadLine();
+                            stage.Update(newTitle: newTitle);
+                            break;
+                        case 2:
+                            Console.WriteLine("Введите новое описание");
+                            var newDescription = Console.ReadLine();
+                            stage.Update(newDescription: newDescription);
+                            break;
+                    }
+                }
+            }
+        }
+
+        static void CloseStage(String command)
+        {
+            if (FindStage(command, out Stage stage))
+            {
+                stage.Close();
+            }
+        }
+
+        static void OpenStage(String command)
+        {
+            if (FindStage(command, out Stage stage))
+            {
+                stage.Open();   
+            }
+        }
+
+        static void RemoveStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal goal))
+            {
+                goal.RemoveStage(stage);
+            }
+        }
+
+        static void CopyToStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal currentGoal))
+            {
+                if (FindGoal(command, Patterns.POS_COPY_MOVE_STAGE_GOAL_ID, out Goal toGoal))
+                {
+                    currentGoal.CopyToStage(stage, toGoal);
+                }
+            }
+        }
+
+        static void MoveToStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal currentGoal))
+            {
+                if (FindGoal(command, Patterns.POS_COPY_MOVE_STAGE_GOAL_ID, out Goal toGoal))
+                {
+                    currentGoal.MoveToStage(stage, toGoal);
+                }
+            }
+        }
+
+        static void MoveUpStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal goal))
+            {
+                goal.MoveStage(stage, MoveType.StepUp);
+            }
+        }
+
+        static void MoveDownStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal goal))
+            {
+                goal.MoveStage(stage, MoveType.StepDown);
+            }
+        }
+
+        static void MoveToBeginStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal goal))
+            {
+                goal.MoveStage(stage, MoveType.ToBegin);
+            }
+        }
+
+        static void MoveToEndStage(String command)
+        {
+            if (FindStage(command, out Stage stage, out Goal goal))
+            {
+                goal.MoveStage(stage, MoveType.ToEnd);
+            }
+        }
+
         #endregion
 
         #region Print
-        static bool FindGoal(String idStr, out Goal goal)
+        static bool FindGoal(String command, out Goal goal)
+        {
+            return FindGoal(command, Patterns.POS_GOAL_ID, out goal);
+        }
+
+        static bool FindGoal(String command, int position, out Goal goal)
         {
             goal = null;
+            var commandArr = command.Split(' ');
+            var idStr = commandArr[position];
+
             if (Int32.TryParse(idStr, out int id))
             {
                 goal = planner.FindGoal(id);
@@ -223,6 +337,38 @@ namespace Planner
                 Console.WriteLine("Некорректный формат Id");
                 return false;
             }
+        }
+
+        static bool FindStage(String command, out Stage stage)
+        {
+            return FindStage(command, out stage, out Goal goal);
+        }
+
+        static bool FindStage(String command, out Stage stage, out Goal goal)
+        {
+            goal = null;
+            stage = null;
+            var commandArr = command.Split(' ');
+
+            if (FindGoal(command, out goal))
+            {
+                if (Int32.TryParse(commandArr[Patterns.POS_STAGE_ID], out int number))
+                {
+                    stage = goal.FindStage(number);
+                    if (stage == null)
+                    {
+                        Console.WriteLine($"Этап {number} не найден");
+                        return false;
+                    }
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine("Некорректный формат номера этапа");
+                    return false;
+                }
+            }
+            return false;
         }
 
         static void PrintGoals(IEnumerable<Goal> goals)
