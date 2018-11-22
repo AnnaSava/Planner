@@ -38,10 +38,19 @@ namespace Planner
 
             CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_COPYTO_GOAL_ID, CopyToStage);
             CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVETO_GOAL_ID, MoveToStage);
-            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_UP, MoveUpStage);
-            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_DOWN, MoveDownStage);
-            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_BEGIN, MoveToBeginStage);
-            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_MOVE_END, MoveToEndStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_UP, MoveUpStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_DOWN, MoveDownStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_BEGIN, MoveToBeginStage);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_END, MoveToEndStage);
+
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_CREATE, AddCheckList);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_REMOVE, RemoveCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_CLOSE, CloseCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_OPEN, OpenCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_UP, MoveUpCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_DOWN, MoveDownCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_BEGIN, MoveToBeginCheckPoint);
+            CommandRegistry.Add(Patterns.GOAL_ID_STAGE_ID_POINT_ID_END, MoveToEndCheckPoint);
         }
 
         #region Goals Actions
@@ -310,6 +319,79 @@ namespace Planner
 
         #endregion
 
+        #region CheckList
+
+        static void AddCheckList(String command)
+        {
+            if (FindStage(command, out Stage stage))
+            {
+                Console.WriteLine("Введите пункты списка через запятую");
+                var itemsStr = Console.ReadLine();
+
+                var items = itemsStr.Split(',').Select(i => i.Trim());
+
+                stage.AddCheckList(items);
+            }
+        }
+
+        static void RemoveCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint, out Stage stage))
+            {
+                stage.RemoveCheckPoint(checkPoint);
+            }
+        }
+
+        static void CloseCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint))
+            {
+                checkPoint.Close();
+            }
+        }
+
+        static void OpenCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint))
+            {
+                checkPoint.Open();
+            }
+        }
+
+        static void MoveUpCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint, out Stage stage))
+            {
+                stage.MoveCheckPoint(checkPoint, MoveType.StepUp);
+            }
+        }
+
+        static void MoveDownCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint, out Stage stage))
+            {
+                stage.MoveCheckPoint(checkPoint, MoveType.StepDown);
+            }
+        }
+
+        static void MoveToBeginCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint, out Stage stage))
+            {
+                stage.MoveCheckPoint(checkPoint, MoveType.ToBegin);
+            }
+        }
+
+        static void MoveToEndCheckPoint(String command)
+        {
+            if (FindCheckPoint(command, out CheckPoint checkPoint, out Stage stage))
+            {
+                stage.MoveCheckPoint(checkPoint, MoveType.ToEnd);
+            }
+        }
+
+        #endregion
+
         #region Print
         static bool FindGoal(String command, out Goal goal)
         {
@@ -365,6 +447,43 @@ namespace Planner
                 else
                 {
                     Console.WriteLine("Некорректный формат номера этапа");
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        static bool FindCheckPoint(String command, out CheckPoint checkPoint)
+        {
+            return FindCheckPoint(command, out checkPoint, out Stage stage);
+        }
+
+        static bool FindCheckPoint(String command, out CheckPoint checkPoint, out Stage stage)
+        {
+            checkPoint = null;
+            stage = null;
+            var commandArr = command.Split(' ');
+
+            if (FindStage(command, out stage))
+            {                
+                var numberStr = commandArr[Patterns.POS_CHECKPOINT_ID];
+
+                if (Int32.TryParse(numberStr, out int number))
+                {
+                    if (number > stage.CheckList.Count || number < 1)
+                    {
+                        Console.WriteLine($"Пункт {number} не найден");
+                        return false;
+                    }
+                    else
+                    {
+                        checkPoint = stage.CheckList[number - 1];
+                        return true;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Некорректный формат номера пункта");
                     return false;
                 }
             }

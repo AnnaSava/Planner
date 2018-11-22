@@ -89,14 +89,24 @@ namespace Planner
         public const String GOAL_ID_STAGE_ID_DELETE = @"^цель \d* этап \d* удал$";        
         public const String GOAL_ID_STAGE_ID_COPYTO_GOAL_ID = @"^цель \d* этап \d* копир в цель \d*$";        
         public const String GOAL_ID_STAGE_ID_MOVETO_GOAL_ID = @"^цель \d* этап \d* перенос в цель \d*$";
-        public const String GOAL_ID_STAGE_ID_MOVE_UP = @"^цель \d* этап \d* вверх$";
-        public const String GOAL_ID_STAGE_ID_MOVE_DOWN = @"^цель \d* этап \d* вниз";
-        public const String GOAL_ID_STAGE_ID_MOVE_BEGIN = @"^цель \d* этап \d* в начало$";
-        public const String GOAL_ID_STAGE_ID_MOVE_END = @"^цель \d* этап \d* в конец$";
+        public const String GOAL_ID_STAGE_ID_UP = @"^цель \d* этап \d* вверх$";
+        public const String GOAL_ID_STAGE_ID_DOWN = @"^цель \d* этап \d* вниз$";
+        public const String GOAL_ID_STAGE_ID_BEGIN = @"^цель \d* этап \d* перв$";
+        public const String GOAL_ID_STAGE_ID_END = @"^цель \d* этап \d* посл$";
+
+        public const String GOAL_ID_STAGE_ID_CREATE = @"^цель \d* этап \d* \+$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_REMOVE = @"^цель \d* этап \d* п \d* удал$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_CLOSE = @"^цель \d* этап \d* п \d* всё$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_OPEN = @"^цель \d* этап \d* п \d* снова$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_UP = @"^цель \d* этап \d* п \d* вверх$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_DOWN = @"^цель \d* этап \d* п \d* вниз$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_BEGIN = @"^цель \d* этап \d* п \d* перв$";
+        public const String GOAL_ID_STAGE_ID_POINT_ID_END = @"^цель \d* этап \d* п \d* посл$";
 
         public const int POS_GOAL_ID = 1;         
         public const int POS_COPY_MOVE_STAGE_GOAL_ID = 7;         
         public const int POS_STAGE_ID = 3;         
+        public const int POS_CHECKPOINT_ID = 5;         
     }
 
     delegate void ConsoleAction(String command);
